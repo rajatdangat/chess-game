@@ -1,15 +1,19 @@
 import styled from "@emotion/styled";
+import Chessboard from "./components/Chessboard";
 
-const StyledText = styled.p`
-  color: red;
-  font-size: 34px;
+const Container = styled.div`
+  height: 100vh;
+  background-color: #302e2b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 function App() {
   return (
-    <div>
-      <StyledText>Hello World!</StyledText>
-    </div>
+    <Container>
+      <Chessboard />
+    </Container>
   );
 }
 
