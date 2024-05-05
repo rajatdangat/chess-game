@@ -1,0 +1,1 @@
+cd webapp && npm run commitlint ${1}
