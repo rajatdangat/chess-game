@@ -1,5 +1,7 @@
 import styled from "@emotion/styled";
 
+import { chessPieces } from "../constants";
+
 const darkBoardBg = "#739552";
 const lightBoardBg = "#ebecd0";
 
@@ -9,7 +11,7 @@ const Board = styled.div`
   background-color: ${darkBoardBg};
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column-reverse;
+  user-select: none;
 `;
 
 const BoardSquare = styled.div`
@@ -17,6 +19,9 @@ const BoardSquare = styled.div`
   width: 100px;
   flex-shrink: 0;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .light {
     color: ${lightBoardBg};
@@ -42,41 +47,60 @@ const SquareLabel = styled.p`
   font-family: sans-serif;
 `;
 
-const YLabel = styled(SquareLabel)`
-  top: 5px;
-  left: 5px;
-`;
-
-const XLabel = styled(SquareLabel)`
+const FileLabel = styled(SquareLabel)`
   bottom: 5px;
   right: 5px;
 `;
 
-const xCoords = ["a", "b", "c", "d", "e", "f", "g", "h"];
+const RankLabel = styled(SquareLabel)`
+  top: 5px;
+  left: 5px;
+`;
 
-const yCoords = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const PieceImage = styled.img`
+  width: 90%;
+`;
 
-const Chessboard = () => {
-  return (
-    <Board>
-      {xCoords.map((x, xIndex) =>
-        yCoords.map((y, yIndex) =>
-          (xIndex % 2 === 0 && yIndex % 2 === 0) ||
-          (xIndex % 2 === 1 && yIndex % 2 == 1) ? (
-            <WhiteSquare key={x + y}>
-              {xIndex === 0 && <YLabel className="dark">{y}</YLabel>}
-              {yIndex === 0 && <XLabel className="dark">{x}</XLabel>}
-            </WhiteSquare>
-          ) : (
-            <TransparentSquare key={x + y}>
-              {xIndex === 0 && <YLabel className="light">{y}</YLabel>}
-              {yIndex === 0 && <XLabel className="light">{x}</XLabel>}
-            </TransparentSquare>
-          )
+type ChessboardProps = {
+  startingPositions: (string | null)[][];
+};
+
+const files: string[] = ["a", "b", "c", "d", "e", "f", "g", "h"];
+
+const ranks: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
+
+const drawChessboard = (startingPositions: (string | null)[][]) => {
+  const squares = [];
+
+  for (let i = ranks.length - 1; i >= 0; i--) {
+    const rank = ranks[i];
+    for (let j = 0; j < files.length; j++) {
+      const file = files[j];
+      const currentPiece = startingPositions[i][j];
+      const chessPiece = currentPiece && chessPieces[currentPiece];
+      squares.push(
+        (i % 2 === 0 && j % 2 === 0) || (i % 2 === 1 && j % 2 == 1) ? (
+          <WhiteSquare key={rank + file}>
+            {i === 0 && <FileLabel className="dark">{file}</FileLabel>}
+            {j === 0 && <RankLabel className="dark">{rank}</RankLabel>}
+            {chessPiece && <PieceImage draggable="false" src={chessPiece.image} />}
+          </WhiteSquare>
+        ) : (
+          <TransparentSquare key={rank + file}>
+            {i === 0 && <FileLabel className="light">{file}</FileLabel>}
+            {j === 0 && <RankLabel className="light">{rank}</RankLabel>}
+            {chessPiece && <PieceImage draggable="false" src={chessPiece.image} />}
+          </TransparentSquare>
         )
-      )}
-    </Board>
-  );
+      );
+    }
+  }
+
+  return squares;
+};
+
+const Chessboard = ({ startingPositions }: ChessboardProps) => {
+  return <Board>{drawChessboard(startingPositions)}</Board>;
 };
 
 export default Chessboard;

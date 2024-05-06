@@ -9,10 +9,21 @@ const Container = styled.div`
   align-items: center;
 `;
 
+const startingPositions: (string | null)[][] = [
+  ["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],
+  new Array(8).fill("WP"),
+  new Array(8).fill(null),
+  new Array(8).fill(null),
+  new Array(8).fill(null),
+  new Array(8).fill(null),
+  new Array(8).fill("BP"),
+  ["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"],
+];
+
 function App() {
   return (
     <Container>
-      <Chessboard />
+      <Chessboard startingPositions={startingPositions} />
     </Container>
   );
 }
