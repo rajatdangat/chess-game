@@ -6,8 +6,9 @@ const darkBoardBg = "#739552";
 const lightBoardBg = "#ebecd0";
 
 const Board = styled.div`
-  height: 800px;
-  width: 800px;
+  max-width: 800px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background-color: ${darkBoardBg};
   display: flex;
   flex-wrap: wrap;
@@ -15,9 +16,8 @@ const Board = styled.div`
 `;
 
 const BoardSquare = styled.div`
-  height: 100px;
-  width: 100px;
-  flex-shrink: 0;
+  height: 100%;
+  width: calc(100% / 8);
   position: relative;
   display: flex;
   justify-content: center;
@@ -40,10 +40,16 @@ const TransparentSquare = styled(BoardSquare)`
   background-color: transparent;
 `;
 
+const RankRow = styled.div`
+  height: calc(100% / 8);
+  width: 100%;
+  display: flex;
+`;
+
 const SquareLabel = styled.p`
   position: absolute;
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: min(1.4rem, 2.5vw);
   font-family: sans-serif;
 `;
 
@@ -73,15 +79,16 @@ const files: string[] = ["a", "b", "c", "d", "e", "f", "g", "h"];
 const ranks: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
 const drawChessboard = (pieceLocations: (string | null)[][], handleBoardClick: HandleBoardClickFn) => {
-  const squares = [];
+  const rankSquares = [];
 
   for (let i = ranks.length - 1; i >= 0; i--) {
+    const fileSquares = [];
     const rank = ranks[i];
     for (let j = 0; j < files.length; j++) {
       const file = files[j];
       const currentPiece = pieceLocations[i][j];
       const chessPiece = currentPiece && chessPieces[currentPiece];
-      squares.push(
+      fileSquares.push(
         (i % 2 === 0 && j % 2 === 0) || (i % 2 === 1 && j % 2 == 1) ? (
           <WhiteSquare onClick={() => handleBoardClick(i, j)} key={rank + file} id={`${i}${j}`}>
             {i === 0 && <FileLabel className="dark">{file}</FileLabel>}
@@ -97,9 +104,10 @@ const drawChessboard = (pieceLocations: (string | null)[][], handleBoardClick: H
         )
       );
     }
+    rankSquares.push(<RankRow>{fileSquares}</RankRow>);
   }
 
-  return squares;
+  return rankSquares;
 };
 
 const Chessboard = ({ pieceLocations, handleBoardClick }: ChessboardProps) => {
