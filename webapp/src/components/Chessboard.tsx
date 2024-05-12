@@ -1,15 +1,18 @@
 import styled from "@emotion/styled";
 
 import { chessPieces } from "../constants";
+import { BoardElement } from "../App";
 
-const darkBoardBg = "#739552";
-const lightBoardBg = "#ebecd0";
+const blackBoardBg = "#739552";
+const whiteBoardBg = "#ebecd0";
+const highlightColor = "#ffff33";
 
 const Board = styled.div`
+  position: relative;
   max-width: 800px;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background-color: ${darkBoardBg};
+  background-color: ${blackBoardBg};
   display: flex;
   flex-wrap: wrap;
   user-select: none;
@@ -24,16 +27,16 @@ const BoardSquare = styled.div`
   align-items: center;
 
   .light {
-    color: ${lightBoardBg};
+    color: ${whiteBoardBg};
   }
 
   .dark {
-    color: ${darkBoardBg};
+    color: ${blackBoardBg};
   }
 `;
 
 const WhiteSquare = styled(BoardSquare)`
-  background-color: ${lightBoardBg};
+  background-color: ${whiteBoardBg};
 `;
 
 const TransparentSquare = styled(BoardSquare)`
@@ -65,13 +68,29 @@ const RankLabel = styled(SquareLabel)`
 
 const PieceImage = styled.img`
   width: 90%;
+  z-index: 100;
+`;
+
+const BoardHighlightSquare = styled.div<BoardHighlightSquareProps>`
+  height: calc(100% / 8);
+  width: calc(100% / 8);
+  background-color: ${highlightColor};
+  opacity: 50%;
+  position: absolute;
+  transform: ${(props) => `translate(${props.file * 100}%, ${(7 - props.rank) * 100}%)`};
 `;
 
 type HandleBoardClickFn = (i: number, j: number) => void;
 
 type ChessboardProps = {
   pieceLocations: (string | null)[][];
+  boardHighlights: BoardElement[];
   handleBoardClick: HandleBoardClickFn;
+};
+
+type BoardHighlightSquareProps = {
+  file: number;
+  rank: number;
 };
 
 const files: string[] = ["a", "b", "c", "d", "e", "f", "g", "h"];
@@ -104,14 +123,25 @@ const drawChessboard = (pieceLocations: (string | null)[][], handleBoardClick: H
         )
       );
     }
-    rankSquares.push(<RankRow>{fileSquares}</RankRow>);
+    rankSquares.push(<RankRow key={i}>{fileSquares}</RankRow>);
   }
 
   return rankSquares;
 };
 
-const Chessboard = ({ pieceLocations, handleBoardClick }: ChessboardProps) => {
-  return <Board>{drawChessboard(pieceLocations, handleBoardClick)}</Board>;
+const drawChessboardHighlights = (boardHighlights: BoardElement[]) => {
+  return boardHighlights.map((highlight) => (
+    <BoardHighlightSquare key={`${highlight.rank}${highlight.file}`} rank={highlight.rank} file={highlight.file} />
+  ));
+};
+
+const Chessboard = ({ pieceLocations, boardHighlights, handleBoardClick }: ChessboardProps) => {
+  return (
+    <Board>
+      {drawChessboard(pieceLocations, handleBoardClick)}
+      {drawChessboardHighlights(boardHighlights)}
+    </Board>
+  );
 };
 
 export default Chessboard;

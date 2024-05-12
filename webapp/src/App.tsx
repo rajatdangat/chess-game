@@ -21,12 +21,28 @@ const startingPositions: (string | null)[][] = [
   ["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"],
 ];
 
+const emptyBoardArray: null[][] = [];
+for (let i = 0; i < 8; i++) {
+  emptyBoardArray.push(new Array(8).fill(null));
+}
+
+export type BoardElement = {
+  rank: number;
+  file: number;
+  type: string;
+};
+
 function App() {
   const [pieceLocations, setPieceLocations] = useState(startingPositions);
+  const [boardHighlights, setBoardHighlights] = useState<BoardElement[]>([]);
 
   const handleBoardClick = (i: number, j: number) => {
     if (pieceLocations[i][j] !== null) {
-      console.log("Clicked on piece!", pieceLocations[i][j]);
+      console.log("Clicked on piece!", pieceLocations[i][j], i, j);
+      setBoardHighlights((prev) => {
+        const newHighlights = prev.filter((highlight) => highlight.type !== "pieceSelect");
+        return [...newHighlights, { rank: i, file: j, type: "pieceSelect" }];
+      });
     } else {
       console.log("Clicked on empty square");
     }
@@ -34,7 +50,11 @@ function App() {
 
   return (
     <Container>
-      <Chessboard pieceLocations={pieceLocations} handleBoardClick={handleBoardClick} />
+      <Chessboard
+        pieceLocations={pieceLocations}
+        boardHighlights={boardHighlights}
+        handleBoardClick={handleBoardClick}
+      />
     </Container>
   );
 }
