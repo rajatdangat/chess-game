@@ -24,62 +24,62 @@ type ChessPieces = {
 };
 
 export const chessPieces: ChessPieces = {
-    WR: {
+    wr: {
         color: "white",
         name: "Rook",
         image: whiteRook,
     },
-    WN: {
+    wn: {
         color: "white",
         name: "Knight",
         image: whiteKnight,
     },
-    WB: {
+    wb: {
         color: "white",
         name: "Bishop",
         image: whiteBishop,
     },
-    WQ: {
+    wq: {
         color: "white",
         name: "Queen",
         image: whiteQueen,
     },
-    WK: {
+    wk: {
         color: "white",
         name: "King",
         image: whiteKing,
     },
-    WP: {
+    wp: {
         color: "white",
         name: "Pawn",
         image: whitePawn,
     },
-    BR: {
+    br: {
         color: "black",
         name: "Rook",
         image: blackRook,
     },
-    BN: {
+    bn: {
         color: "black",
         name: "Knight",
         image: blackKnight,
     },
-    BB: {
+    bb: {
         color: "black",
         name: "Bishop",
         image: blackBishop,
     },
-    BQ: {
+    bq: {
         color: "black",
         name: "Queen",
         image: blackQueen,
     },
-    BK: {
+    bk: {
         color: "black",
         name: "King",
         image: blackKing,
     },
-    BP: {
+    bp: {
         color: "black",
         name: "Pawn",
         image: blackPawn,

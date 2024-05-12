@@ -1,6 +1,8 @@
-import styled from "@emotion/styled";
-import Chessboard from "./components/Chessboard";
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { Chess } from "chess.js";
+
+import Chessboard from "./components/Chessboard";
 
 const Container = styled.div`
   height: 100vh;
@@ -9,17 +11,6 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
-const startingPositions: (string | null)[][] = [
-  ["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],
-  new Array(8).fill("WP"),
-  new Array(8).fill(null),
-  new Array(8).fill(null),
-  new Array(8).fill(null),
-  new Array(8).fill(null),
-  new Array(8).fill("BP"),
-  ["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"],
-];
 
 const emptyBoardArray: null[][] = [];
 for (let i = 0; i < 8; i++) {
@@ -33,12 +24,13 @@ export type BoardElement = {
 };
 
 function App() {
-  const [pieceLocations, setPieceLocations] = useState(startingPositions);
+  const [chess] = useState<Chess>(new Chess());
   const [boardHighlights, setBoardHighlights] = useState<BoardElement[]>([]);
 
   const handleBoardClick = (i: number, j: number) => {
-    if (pieceLocations[i][j] !== null) {
-      console.log("Clicked on piece!", pieceLocations[i][j], i, j);
+    const board = chess.board();
+    if (board[i][j] !== null) {
+      console.log("Clicked on piece!", board[i][j], i, j);
       setBoardHighlights((prev) => {
         const newHighlights = prev.filter((highlight) => highlight.type !== "pieceSelect");
         return [...newHighlights, { rank: i, file: j, type: "pieceSelect" }];
@@ -50,11 +42,7 @@ function App() {
 
   return (
     <Container>
-      <Chessboard
-        pieceLocations={pieceLocations}
-        boardHighlights={boardHighlights}
-        handleBoardClick={handleBoardClick}
-      />
+      <Chessboard chess={chess} boardHighlights={boardHighlights} handleBoardClick={handleBoardClick} />
     </Container>
   );
 }
