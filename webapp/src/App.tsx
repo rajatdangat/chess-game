@@ -12,10 +12,12 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const emptyBoardArray: null[][] = [];
-for (let i = 0; i < 8; i++) {
-  emptyBoardArray.push(new Array(8).fill(null));
-}
+const squareNotationToIndex = (square: string): [number, number] => {
+  const lastTwo = square.slice(-2);
+  const file = lastTwo.charCodeAt(0) - 97;
+  const rank = Number(lastTwo[1]);
+  return [8 - rank, file];
+};
 
 export type BoardElement = {
   rank: number;
@@ -26,11 +28,22 @@ export type BoardElement = {
 function App() {
   const [chess] = useState<Chess>(new Chess());
   const [boardHighlights, setBoardHighlights] = useState<BoardElement[]>([]);
+  const [boardHints, setBoardHints] = useState<BoardElement[]>([]);
 
   const handleBoardClick = (i: number, j: number) => {
     const board = chess.board();
-    if (board[i][j] !== null) {
-      console.log("Clicked on piece!", board[i][j], i, j);
+    const piece = board[i][j];
+    if (piece !== null) {
+      console.log("Clicked on piece!", piece, i, j);
+      const moves = chess.moves({ square: piece.square });
+
+      const hints: BoardElement[] = [];
+      moves.forEach((move) => {
+        const [rank, file] = squareNotationToIndex(move);
+        hints.push({ rank, file, type: "hint" });
+      });
+      setBoardHints(hints);
+
       setBoardHighlights((prev) => {
         const newHighlights = prev.filter((highlight) => highlight.type !== "pieceSelect");
         return [...newHighlights, { rank: i, file: j, type: "pieceSelect" }];
@@ -42,7 +55,12 @@ function App() {
 
   return (
     <Container>
-      <Chessboard chess={chess} boardHighlights={boardHighlights} handleBoardClick={handleBoardClick} />
+      <Chessboard
+        chess={chess}
+        boardHighlights={boardHighlights}
+        boardHints={boardHints}
+        handleBoardClick={handleBoardClick}
+      />
     </Container>
   );
 }

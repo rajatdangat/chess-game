@@ -7,6 +7,7 @@ import { Chess } from "chess.js";
 const blackBoardBg = "#739552";
 const whiteBoardBg = "#ebecd0";
 const highlightColor = "#ffff33";
+const hintColor = "#00000024";
 
 const Board = styled.div`
   position: relative;
@@ -72,13 +73,30 @@ const PieceImage = styled.img`
   z-index: 100;
 `;
 
-const BoardHighlightSquare = styled.div<BoardHighlightSquareProps>`
+const BoardHighlightSquare = styled.div<BoardElementProps>`
   height: calc(100% / 8);
   width: calc(100% / 8);
   background-color: ${highlightColor};
   opacity: 50%;
   position: absolute;
-  transform: ${(props) => `translate(${props.file * 100}%, ${(7 - props.rank) * 100}%)`};
+  transform: ${(props) => `translate(${props.file * 100}%, ${props.rank * 100}%)`};
+`;
+
+const BoardHintSquare = styled.div<BoardElementProps>`
+  height: calc(100% / 8);
+  width: calc(100% / 8);
+  position: absolute;
+  transform: ${(props) => `translate(${props.file * 100}%, ${props.rank * 100}%)`};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const HintMoveCircle = styled.div`
+  background-color: ${hintColor};
+  border-radius: 50%;
+  width: 30%;
+  height: 30%;
 `;
 
 type HandleBoardClickFn = (i: number, j: number) => void;
@@ -86,23 +104,24 @@ type HandleBoardClickFn = (i: number, j: number) => void;
 type ChessboardProps = {
   chess: Chess;
   boardHighlights: BoardElement[];
+  boardHints: BoardElement[];
   handleBoardClick: HandleBoardClickFn;
 };
 
-type BoardHighlightSquareProps = {
+type BoardElementProps = {
   file: number;
   rank: number;
 };
 
 const files: string[] = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
-const ranks: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const ranks: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const drawChessboard = (chess: Chess, handleBoardClick: HandleBoardClickFn) => {
   const rankSquares = [];
   const positions = chess.board();
 
-  for (let i = ranks.length - 1; i >= 0; i--) {
+  for (let i = 0; i < ranks.length; i++) {
     const fileSquares = [];
     const rank = ranks[i];
     for (let j = 0; j < files.length; j++) {
@@ -112,14 +131,14 @@ const drawChessboard = (chess: Chess, handleBoardClick: HandleBoardClickFn) => {
       fileSquares.push(
         (i % 2 === 0 && j % 2 === 0) || (i % 2 === 1 && j % 2 == 1) ? (
           <WhiteSquare onClick={() => handleBoardClick(i, j)} key={rank + file} id={`${i}${j}`}>
-            {i === 0 && <FileLabel className="dark">{file}</FileLabel>}
-            {j === 0 && <RankLabel className="dark">{rank}</RankLabel>}
+            {i === 7 && <FileLabel className="dark">{file}</FileLabel>}
+            {j === 0 && <RankLabel className="dark">{9 - rank}</RankLabel>}
             {chessPiece && <PieceImage draggable="false" src={chessPiece.image} />}
           </WhiteSquare>
         ) : (
           <TransparentSquare onClick={() => handleBoardClick(i, j)} key={rank + file} id={`${i}${j}`}>
-            {i === 0 && <FileLabel className="light">{file}</FileLabel>}
-            {j === 0 && <RankLabel className="light">{rank}</RankLabel>}
+            {i === 7 && <FileLabel className="light">{file}</FileLabel>}
+            {j === 0 && <RankLabel className="light">{9 - rank}</RankLabel>}
             {chessPiece && <PieceImage draggable="false" src={chessPiece.image} />}
           </TransparentSquare>
         )
@@ -137,11 +156,20 @@ const drawChessboardHighlights = (boardHighlights: BoardElement[]) => {
   ));
 };
 
-const Chessboard = ({ chess, boardHighlights, handleBoardClick }: ChessboardProps) => {
+const drawChessboardHints = (boardHints: BoardElement[]) => {
+  return boardHints.map((hint) => (
+    <BoardHintSquare key={`${hint.rank}${hint.file}`} rank={hint.rank} file={hint.file}>
+      <HintMoveCircle />
+    </BoardHintSquare>
+  ));
+};
+
+const Chessboard = ({ chess, boardHighlights, boardHints, handleBoardClick }: ChessboardProps) => {
   return (
     <Board>
       {drawChessboard(chess, handleBoardClick)}
       {drawChessboardHighlights(boardHighlights)}
+      {drawChessboardHints(boardHints)}
     </Board>
   );
 };
