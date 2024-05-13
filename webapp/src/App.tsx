@@ -13,9 +13,8 @@ const Container = styled.div`
 `;
 
 const squareNotationToIndex = (square: string): [number, number] => {
-  const lastTwo = square.slice(-2);
-  const file = lastTwo.charCodeAt(0) - 97;
-  const rank = Number(lastTwo[1]);
+  const file = square.charCodeAt(0) - 97;
+  const rank = Number(square[1]);
   return [8 - rank, file];
 };
 
@@ -25,22 +24,34 @@ export type BoardElement = {
   type: string;
 };
 
+export type HintElement = {
+  rank: number;
+  file: number;
+  type: string;
+  move: string;
+};
+
+const chess = new Chess();
+const board = chess.board();
+
+export type Board = typeof board;
+
 function App() {
-  const [chess] = useState<Chess>(new Chess());
+  const [board, setBoard] = useState<Board>(chess.board());
   const [boardHighlights, setBoardHighlights] = useState<BoardElement[]>([]);
-  const [boardHints, setBoardHints] = useState<BoardElement[]>([]);
+  const [boardHints, setBoardHints] = useState<HintElement[]>([]);
 
   const handleBoardClick = (i: number, j: number) => {
-    const board = chess.board();
     const piece = board[i][j];
     if (piece !== null) {
       console.log("Clicked on piece!", piece, i, j);
-      const moves = chess.moves({ square: piece.square });
+      const moves = chess.moves({ square: piece.square, verbose: true });
+      console.log("moves", moves);
 
-      const hints: BoardElement[] = [];
+      const hints: HintElement[] = [];
       moves.forEach((move) => {
-        const [rank, file] = squareNotationToIndex(move);
-        hints.push({ rank, file, type: "hint" });
+        const [rank, file] = squareNotationToIndex(move.to);
+        hints.push({ rank, file, move: move.san, type: "hint" });
       });
       setBoardHints(hints);
 
@@ -53,13 +64,25 @@ function App() {
     }
   };
 
+  const handleHintClick = (move: string) => {
+    console.log(move);
+    try {
+      chess.move(move);
+      setBoardHints([]);
+      setBoard(chess.board());
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Container>
       <Chessboard
-        chess={chess}
+        board={board}
         boardHighlights={boardHighlights}
         boardHints={boardHints}
         handleBoardClick={handleBoardClick}
+        handleHintClick={handleHintClick}
       />
     </Container>
   );
