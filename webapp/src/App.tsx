@@ -32,12 +32,12 @@ export type HintElement = {
 };
 
 const chess = new Chess();
-const board = chess.board();
+const initialBoard = chess.board();
 
-export type Board = typeof board;
+export type Board = typeof initialBoard;
 
 function App() {
-  const [board, setBoard] = useState<Board>(chess.board());
+  const [board, setBoard] = useState<Board>(initialBoard);
   const [boardHighlights, setBoardHighlights] = useState<BoardElement[]>([]);
   const [boardHints, setBoardHints] = useState<HintElement[]>([]);
 
@@ -57,19 +57,30 @@ function App() {
 
       setBoardHighlights((prev) => {
         const newHighlights = prev.filter((highlight) => highlight.type !== "pieceSelect");
-        return [...newHighlights, { rank: i, file: j, type: "pieceSelect" }];
+        const alreadyHighlighted = prev.filter((highlight) => highlight.rank === i && highlight.file === j);
+        if (!alreadyHighlighted.length) {
+          newHighlights.push({ rank: i, file: j, type: "pieceSelect" });
+        }
+        return newHighlights;
       });
     } else {
       console.log("Clicked on empty square");
     }
   };
 
-  const handleHintClick = (move: string) => {
+  const handleHintClick = (move: string, rank: number, file: number) => {
     console.log(move);
     try {
       chess.move(move);
       setBoardHints([]);
       setBoard(chess.board());
+      const pieceSelectHighlight = boardHighlights.find((highlight) => highlight.type === "pieceSelect");
+      if (pieceSelectHighlight) {
+        setBoardHighlights([
+          { ...pieceSelectHighlight, type: "pieceMoveOldPosition" },
+          { rank, file, type: "pieceMoveNewPosition" },
+        ]);
+      }
     } catch (err) {
       console.log(err);
     }

@@ -110,7 +110,7 @@ const HintCaptureCircle = styled.div`
 `;
 
 type HandleBoardClickFn = (i: number, j: number) => void;
-type HandleHintClickFn = (move: string) => void;
+type HandleHintClickFn = (move: string, rank: number, file: number) => void;
 
 type ChessboardProps = {
   board: Board;
@@ -173,7 +173,7 @@ const drawChessboardHints = (boardHints: HintElement[], handleHintClick: HandleH
       key={`${hint.rank}${hint.file}`}
       rank={hint.rank}
       file={hint.file}
-      onClick={() => handleHintClick(hint.move)}
+      onClick={() => handleHintClick(hint.move, hint.rank, hint.file)}
     >
       {hint.move.includes("x") ? <HintCaptureCircle /> : <HintMoveCircle />}
     </BoardHintSquare>
