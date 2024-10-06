@@ -1,0 +1,105 @@
+1. Handle pawn promotion
+Consolidate multiple moves in one.
+Give choice to select promoted piece.
+Eg: [
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "c8",
+        "san": "c8=N",
+        "flags": "np",
+        "lan": "c7c8n",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "2Nrkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "promotion": "n"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "c8",
+        "san": "c8=B",
+        "flags": "np",
+        "lan": "c7c8b",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "2Brkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "promotion": "b"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "c8",
+        "san": "c8=R",
+        "flags": "np",
+        "lan": "c7c8r",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "2Rrkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "promotion": "r"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "c8",
+        "san": "c8=Q",
+        "flags": "np",
+        "lan": "c7c8q",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "2Qrkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "promotion": "q"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "d8",
+        "san": "cxd8=N",
+        "flags": "cp",
+        "lan": "c7d8n",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "3Nkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "captured": "r",
+        "promotion": "n"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "d8",
+        "san": "cxd8=B",
+        "flags": "cp",
+        "lan": "c7d8b",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "3Bkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "captured": "r",
+        "promotion": "b"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "d8",
+        "san": "cxd8=R+",
+        "flags": "cp",
+        "lan": "c7d8r",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "3Rkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "captured": "r",
+        "promotion": "r"
+    },
+    {
+        "color": "w",
+        "piece": "p",
+        "from": "c7",
+        "to": "d8",
+        "san": "cxd8=Q+",
+        "flags": "cp",
+        "lan": "c7d8q",
+        "before": "3rkb1N/p1Pbp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R w KQ - 1 21",
+        "after": "3Qkb1N/p2bp3/8/2P4P/P2P1P2/6P1/7P/R1BQK2R b KQ - 0 21",
+        "captured": "r",
+        "promotion": "q"
+    }
+]
