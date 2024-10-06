@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import { Chess } from "chess.js";
+import { Chess, Move } from "chess.js";
 
 import Chessboard from "./components/Chessboard";
 
@@ -23,6 +23,28 @@ const squareNotationToIndex = (square: string): [number, number] => {
   return [8 - rank, file];
 };
 
+const getPromotionHints = (moves: Move[]): Record<string, PromotionHint> => {
+  return moves
+    .filter((move) => move.promotion)
+    .reduce((acc: Record<string, PromotionHint>, curr) => {
+      const [rank, file] = squareNotationToIndex(curr.to);
+      if (acc[curr.to]) {
+        acc[curr.to].move = {
+          ...(acc[curr.to].move as Record<string, string>),
+          [curr.promotion as string]: curr.san,
+        };
+      } else {
+        acc[curr.to] = {
+          rank,
+          file,
+          isCapture: Boolean(curr.captured),
+          move: { [curr.promotion as string]: curr.san },
+        };
+      }
+      return acc;
+    }, {});
+};
+
 const gameOver = () => {
   window.alert("Game Over");
   chess.reset();
@@ -34,14 +56,19 @@ export type BoardElement = {
   type: string;
 };
 
+export type HintMove = string | Record<string, string>;
+
 export type HintElement = {
   rank: number;
   file: number;
   type: string;
-  move: string;
+  move: HintMove;
+  isCapture: boolean;
 };
 
-const chess = new Chess();
+export type PromotionHint = Omit<HintElement, "type">;
+
+const chess = new Chess("r7/1P6/8/8/8/8/1K3p2/4k3 w - - 0 1");
 const initialBoard = chess.board();
 
 export type Board = typeof initialBoard;
@@ -85,6 +112,8 @@ function App() {
 
     stockfish.postMessage("uci");
 
+    stockfish.postMessage("setoption name Skill Level value 1");
+
     stockfish.postMessage(`position fen ${chess.fen()}`);
 
     isEffectCalled.current = true;
@@ -107,10 +136,20 @@ function App() {
       console.log("turn", chess.turn());
       if (chess.turn() === "w") {
         const hints: HintElement[] = [];
-        moves.forEach((move) => {
-          const [rank, file] = squareNotationToIndex(move.to);
-          hints.push({ rank, file, move: move.san, type: "hint" });
+
+        const promotionHints = getPromotionHints(moves);
+
+        Object.values(promotionHints).forEach(({ rank, file, move, isCapture }) => {
+          hints.push({ rank, file, move, isCapture, type: "hint" });
         });
+
+        moves
+          .filter((move) => !move.promotion)
+          .forEach((move) => {
+            const [rank, file] = squareNotationToIndex(move.to);
+            hints.push({ rank, file, move: move.san, isCapture: Boolean(move.captured), type: "hint" });
+          });
+
         setBoardHints(hints);
       }
 
@@ -127,8 +166,9 @@ function App() {
     }
   };
 
-  const handleHintClick = (move: string, rank: number, file: number) => {
-    console.log(move);
+  const handleHintClick = (hintMove: HintMove, rank: number, file: number) => {
+    // TODO: show dropdown to select a piece
+    const move = typeof hintMove === "object" ? hintMove["q"] : hintMove;
     try {
       chess.move(move);
       stockfish.postMessage(`position fen ${chess.fen()}`);
@@ -142,7 +182,7 @@ function App() {
         ]);
       }
 
-      stockfish.postMessage("go depth 15");
+      stockfish.postMessage("go depth 1");
     } catch (err) {
       console.log(err);
     }

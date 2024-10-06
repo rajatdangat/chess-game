@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 import { chessPieces } from "../constants";
-import { Board, BoardElement, HintElement } from "../App";
+import { Board, BoardElement, HintElement, HintMove } from "../App";
 
 const blackBoardBg = "#739552";
 const whiteBoardBg = "#ebecd0";
@@ -110,7 +110,7 @@ const HintCaptureCircle = styled.div`
 `;
 
 type HandleBoardClickFn = (i: number, j: number) => void;
-type HandleHintClickFn = (move: string, rank: number, file: number) => void;
+type HandleHintClickFn = (move: HintMove, rank: number, file: number) => void;
 
 type ChessboardProps = {
   board: Board;
@@ -175,7 +175,7 @@ const drawChessboardHints = (boardHints: HintElement[], handleHintClick: HandleH
       file={hint.file}
       onClick={() => handleHintClick(hint.move, hint.rank, hint.file)}
     >
-      {hint.move.includes("x") ? <HintCaptureCircle /> : <HintMoveCircle />}
+      {hint.isCapture ? <HintCaptureCircle /> : <HintMoveCircle />}
     </BoardHintSquare>
   ));
 };

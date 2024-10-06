@@ -25,3 +25,5 @@
 - piece capture
 
 9. Drag and drop
+
+10. Deployment CI/CD
